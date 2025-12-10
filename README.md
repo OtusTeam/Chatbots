@@ -5,4 +5,5 @@
 
 - [Урок 1. Знакомство. Введение](lessons/lesson.01/)
 - [Урок 2. Инструменты разработки и архитектура диалоговых систем](lessons/lesson.02/)
+- [Урок 3. Asyncio, async/await, event loop](lessons/lesson.03/)
 
