@@ -34,4 +34,4 @@ async def command_fox(message: types.Message):
     image_fox = fox()
 
     await message.answer_photo(image_fox)
-    await message.answer_
+
