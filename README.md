@@ -9,4 +9,5 @@
 - [Урок 4. Введение в aiogram](lessons/lesson.04/)
 - [Урок 5. Клавиатуры и меню в aiogram](lessons/lesson.05/)
 - [Урок 6. FSM: многошаговые сценарии](lessons/lesson.06/)
+- [Урок 7. Структура кода и мини-проект](lessons/lesson.07/)
 
