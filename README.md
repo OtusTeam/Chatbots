@@ -13,4 +13,5 @@
 - [Урок 8. SQLite и основы SQL](lessons/lesson.08/)
 - [Урок 9. SQLAlchemy (ORM) без боли](lessons/lesson.09/)
 - [Урок 10. Интеграция БД в бота](lessons/lesson.10/)
+- [Урок 11. Миграции и данные](lessons/lesson.11/)
 
