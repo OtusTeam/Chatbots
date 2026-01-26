@@ -1,259 +1,223 @@
-## 1. Синхронный подход — когда и зачем используем
+## Создаём/меняем структуру таблиц
 
-* Подход “одна операция за раз”:
-  запрос → ждём ответа → следующий запрос.
-* Подходит, когда:
+### CREATE TABLE — создать таблицу
 
-  * мало пользователей / низкая нагрузка;
-  * почти нет сетевых запросов (всё локально и быстро);
-  * простые скрипты, одноразовые утилиты, cron-задачи.
-* Примеры:
-
-  ```python
-  import requests
-
-  # Получаем данные о погоде
-  response = requests.get("https://api.weather.example.com")
-  data = response.json()
-  print(data)
-  ```
-
----
-
-## 2. Плюсы и минусы синхронного подхода
-
-**Плюсы:**
-
-* Простая модель: код выполняется сверху вниз, легко читать.
-* Легче дебажить новичкам.
-* Много библиотек и примеров “из коробки”.
-
-**Минусы:**
-
-* Любой медленный запрос блокирует весь поток.
-* При 10–100 одновременных запросах всё превращается в очередь.
-* Нормально не масштабируется для ботов и веб-сервисов.
-
----
-
-## 3. Асинхронный подход — когда и зачем используем
-
-* Подход “пока один ждёт — делаем что-то ещё”.
-* Нужен, когда в проекте много **I/O-операций**:
-
-  * HTTP-запросы к внешним API;
-  * запросы к БД;
-  * работа с сетью, файловыми системами.
-* Особенно полезен в:
-
-  * Telegram-ботах;
-  * веб-приложениях;
-  * микросервисах, API-шлюзах.
-
-Пример ситуации: бот обращается к 3 API → async позволяет ждать их **параллельно**, а не по очереди.
-
----
-
-## 4. Плюсы и минусы асинхронного подхода
-
-**Плюсы:**
-
-* Высокая пропускная способность при том же железе.
-* Один процесс/воркер может обслуживать десятки/сотни одновременных пользователей.
-* Отлично сочетается с современными фреймворками (FastAPI, aiogram).
-
-**Минусы:**
-
-* Сложнее для понимания: корутины, event loop, await.
-* Нельзя “бездумно” вызывать синхронный код внутри async (иначе всё блокируется).
-* Не ускоряет тяжёлые **CPU-задачи** (их решают другими инструментами).
-
----
-
-## 5. Сравнение синхронного и асинхронного подхода
-
-| Критерий          | Синхронный                             | Асинхронный                                     |
-| ----------------- | -------------------------------------- | ----------------------------------------------- |
-| Модель исполнения | Один запрос за раз                     | Много запросов “параллельно” (конкурентно)      |
-| Нагрузка          | Плохо переносит пиковые нагрузки       | Хорошо масштабируется по I/O                    |
-| Сложность кода    | Простая                                | Сложнее: async/await, gather, TaskGroup         |
-| Где использовать  | Скрипты, утилиты, простые сервисы      | Боты, API, веб-сервисы, работа с множеством API |
-| CPU-задачи        | Одинаково (нужно ещё процессы/воркеры) | Одинаково (async не решает CPU-проблемы)        |
-
----
-
-## 6. Основная структура асинхронного метода
-
-Базовый шаблон async-функции:
-
-```python
-import asyncio
-
-# комментарий: объявляем асинхронную функцию, которая будет что-то делать "не блокируя" event loop
-async def fetch_data() -> str:
-    # комментарий: имитируем ожидание внешнего ресурса (например, HTTP-запроса)
-    await asyncio.sleep(1)
-    # комментарий: возвращаем строку с результатом
-    return "Данные получены"
-
-# комментарий: точка входа в программу, обычная синхронная функция
-def main() -> None:
-    # комментарий: запускаем асинхронную функцию через asyncio.run
-    result = asyncio.run(fetch_data())
-    # комментарий: выводим результат на экран
-    print(result)
-
-# комментарий: защищаем запуск скрипта стандартной конструкцией
-if __name__ == "__main__":
-    main()
+```sql
+CREATE TABLE users (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  tg_user_id INTEGER NOT NULL UNIQUE,
+  username TEXT
+);
 ```
 
-Ключевые элементы:
+### DROP TABLE — удалить таблицу
 
-* `async def` — объявление корутины (асинхронной функции).
-* `await` — “точка ожидания”, где управление отдаётся event loop.
-* `asyncio.run(coro)` — запуск верхнеуровневой корутины в скрипте.
-
----
-
-## 7. Основные асинхронные “команды” (паттерны и функции)
-
-### 7.1. Запуск корутины
-
-```python
-asyncio.run(main_coro())
+```sql
+DROP TABLE IF EXISTS users;
 ```
 
-* Создаёт event loop, выполняет корутину, закрывает loop.
+### ALTER TABLE — изменить таблицу
 
-### 7.2. Параллельные задачи: `asyncio.gather`
+```sql
+-- добавить новое поле
+ALTER TABLE users ADD COLUMN first_name TEXT;
 
-```python
-# комментарий: формируем список корутин
-coros = [fetch_one(), fetch_two(), fetch_three()]
+-- переименовать таблицу
+ALTER TABLE users RENAME TO bot_users;
 
-# комментарий: ждём, пока все корутины завершатся, результаты приходят в том же порядке
-results = await asyncio.gather(*coros)
+-- переименовать колонку (если SQLite поддерживает вашу версию)
+ALTER TABLE bot_users RENAME COLUMN username TO tg_username;
 ```
 
-* Запускает несколько корутин конкурентно.
-* Можно использовать `return_exceptions=True` для мягкой обработки ошибок.
+### CREATE INDEX — ускорить выборки
 
-### 7.3. TaskGroup (Python 3.11+)
-
-```python
-async with asyncio.TaskGroup() as group:
-    # комментарий: создаём задачи внутри группы
-    task_one = group.create_task(fetch_one())
-    task_two = group.create_task(fetch_two())
-# комментарий: при ошибке одной задачи остальные автоматически отменяются
+```sql
+CREATE INDEX idx_messages_user_created_at
+ON messages(user_id, created_at);
 ```
 
-* Structured concurrency: помогает управлять группой задач как единым блоком.
+### DROP INDEX — удалить индекс
 
-### 7.4. Таймауты
-
-```python
-try:
-    # комментарий: ограничиваем время выполнения корутины 2 секундами
-    async with asyncio.timeout(2):
-        result = await fetch_something()
-except TimeoutError:
-    print("Операция превысила лимит времени")
-```
-
-* Защищает от “вечного ожидания” зависшего API.
-
-### 7.5. Асинхронный HTTP-клиент (httpx)
-
-```python
-import httpx
-
-# комментарий: асинхронная функция, делающая HTTP-запрос
-async def fetch_weather() -> str:
-    # комментарий: создаём AsyncClient с таймаутом
-    async with httpx.AsyncClient(timeout=5.0) as client:
-        # комментарий: отправляем GET-запрос и ждём ответа
-        response = await client.get("https://api.weather.example.com")
-        # комментарий: проверяем, что статус успешный
-        response.raise_for_status()
-        # комментарий: получаем текст ответа
-        return response.text
+```sql
+DROP INDEX IF EXISTS idx_messages_user_created_at;
 ```
 
 ---
 
-## 8. Подводные камни асинхронности
+## Вставка/обновление/удаление данных (CRUD)
 
-* **Блокирующий I/O внутри async**:
+### INSERT — добавить запись
 
-  * Нельзя вызывать `requests.get`, долгие `time.sleep`, тяжелое чтение файлов внутри корутин.
-  * Они блокируют event loop → всё “замирает”.
-* **GIL и CPU-задачи**:
+```sql
+INSERT INTO users (tg_user_id, username)
+VALUES (1001, 'alex_dev');
+```
 
-  * Async не ускоряет тяжёлые вычисления (машинное обучение, сложные циклы).
-  * Для CPU-нагрузки нужны процессы/worker’ы, Celery, multiprocessing и т.п.
-* **Забытые await**:
+### INSERT…SELECT — вставка с подзапросом
 
-  * Вызов корутины без `await` создаёт объект, который не выполняется.
-  * Частый симптом: предупреждения вида “coroutine was never awaited”.
-* **Смешивание sync/async HTTP-клиентов**:
+```sql
+INSERT INTO messages (user_id, chat_id, direction, text, created_at)
+VALUES (
+  (SELECT id FROM users WHERE tg_user_id=1001),
+  (SELECT id FROM chats WHERE tg_chat_id=2001),
+  'inbound',
+  'Привет! Хочу узнать статус.',
+  '2025-12-26 10:00:00'
+);
+```
 
-  * В одном модуле: `httpx.AsyncClient` + `requests` → блокировки.
-  * Лучше всё I/O в этом слое делать через async.
-* **Множественный event loop** в одном процессе:
+### UPDATE — изменить запись
 
-  * Не вызывать `asyncio.run` изнутри уже работающего event loop (например, внутри FastAPI/aiogram).
-  * Внутри фреймворков использовать только `await`, loop создаёт сам фреймворк.
+```sql
+UPDATE users
+SET username = 'alex_new'
+WHERE tg_user_id = 1001;
+```
+
+### DELETE — удалить запись
+
+```sql
+DELETE FROM messages
+WHERE id = 10;
+```
 
 ---
 
-## 9. Полезные паттерны и команды “на каждый день”
+## SELECT: выборка данных (самое частое в боте)
 
-### 9.1. Стандартный шаблон async-клиента к API
+### SELECT + WHERE — фильтрация
 
-```python
-import asyncio
-import httpx
-
-
-async def fetch_json(url: str) -> dict:
-    async with httpx.AsyncClient(timeout=5.0) as client:
-        response = await client.get(url)
-        response.raise_for_status()
-        return response.json()
-
-
-async def main() -> None:
-    data = await fetch_json("https://api.example.com/data")
-    print(data)
-
-
-if __name__ == "__main__":
-    asyncio.run(main())
+```sql
+SELECT id, text, created_at
+FROM messages
+WHERE user_id = 1;
 ```
 
-### 9.2. Параллельные запросы к нескольким API
+### ORDER BY + LIMIT — “последние N”
 
-```python
-async def main() -> None:
-    async with httpx.AsyncClient(timeout=5.0) as client:
-        weather_coro = client.get("https://api.weather.example.com")
-        time_coro = client.get("https://api.time.example.com")
-
-        responses = await asyncio.gather(weather_coro, time_coro)
-        weather_response, time_response = responses
-        print(weather_response.text, time_response.text)
+```sql
+SELECT text, created_at
+FROM messages
+WHERE user_id = 1
+ORDER BY created_at DESC
+LIMIT 10;
 ```
 
-### 9.3. Быстрая проверка корутин в REPL / Jupyter
+### DISTINCT — уникальные значения
 
-```python
-import asyncio
-
-# В обычном Python:
-asyncio.run(some_coro())
-
-# В Jupyter (где уже есть event loop) часто достаточно:
-await some_coro()
+```sql
+SELECT DISTINCT direction
+FROM messages;
 ```
+
+### LIKE — поиск по подстроке
+
+```sql
+SELECT text, created_at
+FROM messages
+WHERE text LIKE '%оплата%'
+ORDER BY created_at DESC
+LIMIT 20;
+```
+
+### IN — “одно из”
+
+```sql
+SELECT text
+FROM messages
+WHERE direction IN ('inbound', 'outbound');
+```
+
+### BETWEEN — диапазон (по датам/числам)
+
+```sql
+SELECT text, created_at
+FROM messages
+WHERE created_at BETWEEN '2025-12-24 00:00:00' AND '2025-12-26 23:59:59';
+```
+
+---
+
+## JOIN: склеиваем таблицы (история “красиво”)
+
+### INNER JOIN — только совпавшие связи
+
+```sql
+SELECT
+  u.tg_user_id,
+  u.username,
+  c.tg_chat_id,
+  m.direction,
+  m.text,
+  m.created_at
+FROM messages m
+JOIN users u ON u.id = m.user_id
+JOIN chats c ON c.id = m.chat_id
+ORDER BY m.created_at DESC
+LIMIT 20;
+```
+
+---
+
+## GROUP BY: аналитика и “топы”
+
+### COUNT + GROUP BY — считаем по дням
+
+```sql
+SELECT
+  date(created_at) AS day,
+  COUNT(*) AS inbound_count
+FROM messages
+WHERE direction = 'inbound'
+GROUP BY date(created_at)
+ORDER BY day DESC;
+```
+
+### GROUP BY + ORDER BY + LIMIT — топ пользователей
+
+```sql
+SELECT
+  u.tg_user_id,
+  u.username,
+  COUNT(*) AS inbound_count
+FROM messages m
+JOIN users u ON u.id = m.user_id
+WHERE m.direction = 'inbound'
+GROUP BY u.tg_user_id, u.username
+ORDER BY inbound_count DESC
+LIMIT 5;
+```
+
+### HAVING — фильтр после группировки
+
+```sql
+SELECT
+  u.tg_user_id,
+  COUNT(*) AS inbound_count
+FROM messages m
+JOIN users u ON u.id = m.user_id
+WHERE m.direction = 'inbound'
+GROUP BY u.tg_user_id
+HAVING COUNT(*) > 1
+ORDER BY inbound_count DESC;
+```
+
+---
+
+## Транзакции: “либо всё, либо ничего”
+
+```sql
+BEGIN;
+
+INSERT INTO users (tg_user_id, username) VALUES (2001, 'test_user');
+INSERT INTO chats (tg_chat_id, chat_type) VALUES (9001, 'private');
+
+COMMIT;
+
+-- если что-то пошло не так
+-- ROLLBACK;
+```
+
+---
+
+
