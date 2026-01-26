@@ -1,0 +1,3 @@
+user - platforma, user_id, username, first_name
+chats - chat_id, chat_type
+messages - message_id, chat_id, user_id
