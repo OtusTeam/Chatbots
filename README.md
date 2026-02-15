@@ -14,4 +14,6 @@
 - [Урок 9. SQLAlchemy (ORM) без боли](lessons/lesson.09/)
 - [Урок 10. Интеграция БД в бота](lessons/lesson.10/)
 - [Урок 11. Миграции и данные](lessons/lesson.11/)
+- [Урок 12. Webhook на FastAPI](lessons/lesson.12/)
+- [Урок 13. Docker и docker-compose (локальная инфраструктура)](lessons/lesson.13/)
 
