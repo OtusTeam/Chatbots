@@ -16,4 +16,5 @@
 - [Урок 11. Миграции и данные](lessons/lesson.11/)
 - [Урок 12. Webhook на FastAPI](lessons/lesson.12/)
 - [Урок 13. Docker и docker-compose (локальная инфраструктура)](lessons/lesson.13/)
+- [Урок 19. Основы RAG (без векторной БД)](lessons/lesson.19/)
 

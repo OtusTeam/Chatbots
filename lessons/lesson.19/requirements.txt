@@ -1,0 +1,2 @@
+gigachat>=0.1.36
+python-dotenv>=1.2.1,<2.0.0
