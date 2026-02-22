@@ -17,4 +17,5 @@
 - [Урок 12. Webhook на FastAPI](lessons/lesson.12/)
 - [Урок 13. Docker и docker-compose (локальная инфраструктура)](lessons/lesson.13/)
 - [Урок 19. Основы RAG (без векторной БД)](lessons/lesson.19/)
+- [Урок 20. Векторный поиск с Qdrant](lessons/lesson.20/)
 
