@@ -1,0 +1,5 @@
+gigachat>=0.1.36
+python-dotenv>=1.0.0
+qdrant-client>=1.7.0
+aiogram>=3.0.0
+openai>=2.24.0

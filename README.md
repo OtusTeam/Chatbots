@@ -18,4 +18,5 @@
 - [Урок 13. Docker и docker-compose (локальная инфраструктура)](lessons/lesson.13/)
 - [Урок 19. Основы RAG (без векторной БД)](lessons/lesson.19/)
 - [Урок 20. Векторный поиск с Qdrant](lessons/lesson.20/)
+- [Урок 21. Качество и устойчивость RAG](lessons/lesson.21/)
 
