@@ -1,0 +1,6 @@
+# Дополнительные зависимости для бенчмарка TTS (Qwen, Bark, Yandex).
+transformers>=4.45.0
+qwen-tts>=0.1.0
+soundfile>=0.12.0
+requests>=2.31.0
+python-dotenv>=1.0.0
