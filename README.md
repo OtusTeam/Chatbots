@@ -21,4 +21,5 @@
 - [Урок 21. Качество и устойчивость RAG](lessons/lesson.21/)
 - [Урок 22. Speech-to-Text (распознавание речи)](lessons/lesson.22/)
 - [Урок 23. Text-to-Speech (озвучка ответа)](lessons/lesson.23/)
+- [Урок 24. Голосовой режим ассистента](lessons/lesson.24/)
 

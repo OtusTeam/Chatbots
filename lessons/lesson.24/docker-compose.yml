@@ -1,0 +1,14 @@
+services:
+  bot:
+    build:
+      context: .
+    env_file:
+      - .env
+    ports:
+      - "${WEBHOOK_PORT:-8000}:${WEBHOOK_PORT:-8000}"
+    volumes:
+      - sqlite_data:/data
+    restart: unless-stopped
+
+volumes:
+  sqlite_data:

@@ -1,0 +1,53 @@
+{
+  "presets": [
+    {
+      "id": "ru_xenia",
+      "name": "Ксения (рус.)",
+      "language": "ru",
+      "model_id": "v5_2_ru",
+      "speaker": "xenia",
+      "sample_rate": 48000
+    },
+    {
+      "id": "ru_aidar",
+      "name": "Айдар (рус.)",
+      "language": "ru",
+      "model_id": "v5_2_ru",
+      "speaker": "aidar",
+      "sample_rate": 48000
+    },
+    {
+      "id": "ru_baya",
+      "name": "Бая (рус.)",
+      "language": "ru",
+      "model_id": "v5_2_ru",
+      "speaker": "baya",
+      "sample_rate": 48000
+    },
+    {
+      "id": "ru_kseniya",
+      "name": "Ксения (рус.)",
+      "language": "ru",
+      "model_id": "v5_2_ru",
+      "speaker": "kseniya",
+      "sample_rate": 48000
+    },
+    {
+      "id": "ru_eugene",
+      "name": "Евгений (рус.)",
+      "language": "ru",
+      "model_id": "v5_2_ru",
+      "speaker": "eugene",
+      "sample_rate": 48000
+    },
+    {
+      "id": "en_1",
+      "name": "English",
+      "language": "en",
+      "model_id": "lj_16khz",
+      "speaker": "lj_16khz",
+      "sample_rate": 16000
+    }
+  ],
+  "default": "ru_xenia"
+}
