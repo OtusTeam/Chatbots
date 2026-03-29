@@ -22,4 +22,5 @@
 - [Урок 22. Speech-to-Text (распознавание речи)](lessons/lesson.22/)
 - [Урок 23. Text-to-Speech (озвучка ответа)](lessons/lesson.23/)
 - [Урок 24. Голосовой режим ассистента](lessons/lesson.24/)
+- [Урок 28. Внешние API: надёжные паттерны](lessons/lesson.28/)
 
