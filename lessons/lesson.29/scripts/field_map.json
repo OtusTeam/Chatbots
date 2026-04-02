@@ -1,0 +1,25 @@
+{
+  "common": {
+    "name": "full_name",
+    "phone": "phone",
+    "email": "email",
+    "comment": "message",
+    "external_id": "external_id"
+  },
+  "bitrix24": {
+    "TITLE": "name",
+    "NAME": "name",
+    "PHONE": "phone",
+    "EMAIL": "email",
+    "COMMENTS": "comment",
+    "SOURCE_ID": "WEB",
+    "STATUS_ID": "NEW"
+  },
+  "amocrm": {
+    "name": "name",
+    "cf_phone": "phone",
+    "cf_email": "email",
+    "cf_comment": "comment",
+    "cf_external_id": "external_id"
+  }
+}
