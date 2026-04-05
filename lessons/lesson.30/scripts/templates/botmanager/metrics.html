@@ -1,0 +1,30 @@
+{% extends "admin/base_site.html" %}
+
+{% block content %}
+  <div style="max-width: 960px;">
+    <h1>{{ title }}</h1>
+
+    <table style="border-collapse: collapse; min-width: 420px;">
+      <thead>
+        <tr>
+          <th style="text-align: left; padding: 8px; border-bottom: 1px solid #ddd;">Метрика</th>
+          <th style="text-align: left; padding: 8px; border-bottom: 1px solid #ddd;">Значение</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for label, value in metrics %}
+          <tr>
+            <td style="padding: 8px; border-bottom: 1px solid #eee;">{{ label }}</td>
+            <td style="padding: 8px; border-bottom: 1px solid #eee;">{{ value }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <p style="margin-top: 24px;">
+      <a href="{% url 'admin-leads-export' %}">Скачать CSV по лидам</a>
+      |
+      <a href="{% url 'admin-orders-export' %}">Скачать CSV по заказам</a>
+    </p>
+  </div>
+{% endblock %}

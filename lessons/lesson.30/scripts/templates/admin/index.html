@@ -1,0 +1,16 @@
+{% extends "admin/index.html" %}
+
+{% block content %}
+  <div style="margin-bottom: 24px; padding: 16px; border: 1px solid #ddd; border-radius: 8px; background: #fff;">
+    <h2 style="margin-top: 0;">Быстрые ссылки Lesson 30</h2>
+    <p>
+      <a href="{% url 'admin-metrics' %}">Открыть метрики</a>
+      |
+      <a href="{% url 'admin-leads-export' %}">CSV по лидам</a>
+      |
+      <a href="{% url 'admin-orders-export' %}">CSV по заказам</a>
+    </p>
+    <p>Используйте админку как backoffice учебного центра: лиды, курсы, заявки, консультации, сообщения и действия операторов.</p>
+  </div>
+  {{ block.super }}
+{% endblock %}
