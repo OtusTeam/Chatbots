@@ -1,0 +1,82 @@
+stages:
+  - test
+  - build
+  - deploy
+
+default:
+  tags:
+    - timeweb-shell
+  before_script:
+    - |
+      if [ ! -d "$CI_PROJECT_DIR/$LESSON32_DIR" ]; then
+        echo "ERROR: каталог урока не найден: $CI_PROJECT_DIR/$LESSON32_DIR"
+        echo "В репозитории Chatbots путь по умолчанию: lessons/lesson.32"
+        echo "В отдельном deploy-репозитории задайте в GitLab CI/CD переменную LESSON32_DIR"
+        echo "(например . если docker-compose и app лежат в корне репозитория)."
+        exit 1
+      fi
+    - cd "$CI_PROJECT_DIR/$LESSON32_DIR"
+    - |
+      if [ -n "${DOCKERHUB_USERNAME:-}" ] && [ -n "${DOCKERHUB_TOKEN:-}" ]; then
+        echo "$DOCKERHUB_TOKEN" | docker login docker.io -u "$DOCKERHUB_USERNAME" --password-stdin
+      else
+        echo "WARNING: DOCKERHUB_USERNAME/DOCKERHUB_TOKEN не заданы, возможен rate limit Docker Hub."
+      fi
+    - |
+      if [ -n "${DOTENV_PROD:-}" ]; then
+        if [ -f "$DOTENV_PROD" ]; then
+          cp "$DOTENV_PROD" .env.prod
+        else
+          printf "%s\n" "$DOTENV_PROD" > .env.prod
+        fi
+        chmod 600 .env.prod
+      fi
+    - |
+      if [ ! -f .env.prod ]; then
+        echo "ERROR: .env.prod не найден. Добавьте CI/CD переменную DOTENV_PROD"
+        echo "или разместите .env.prod в каталоге деплоя."
+        exit 1
+      fi
+
+variables:
+  COMPOSE_FILE: docker-compose.prod.yml
+  BOT_IMAGE: "$CI_REGISTRY_IMAGE/bot:$CI_COMMIT_SHA"
+  LESSON32_DIR: "lessons/lesson.32"
+
+test:
+  stage: test
+  script:
+    - if [ -f .env.prod ]; then cp .env.prod .env; fi
+    - python --version
+    - python -m py_compile app/main.py app/config.py app/storage/postgres.py app/cache/redis.py
+    - python -m py_compile scripts/metrics_demo.py scripts/cost_latency_report.py scripts/env_validate.py scripts/healthcheck_demo.py scripts/tg_alert_demo.py scripts/smoke_test_bot_stack.py
+  rules:
+    - if: '$CI_COMMIT_BRANCH'
+
+build:
+  stage: build
+  script:
+    - echo "$CI_REGISTRY_PASSWORD" | docker login "$CI_REGISTRY" -u "$CI_REGISTRY_USER" --password-stdin
+    - docker compose -f "$COMPOSE_FILE" --env-file .env.prod config > /tmp/compose.rendered.yml
+    - docker compose -f "$COMPOSE_FILE" --env-file .env.prod build --pull bot
+    - docker push "$BOT_IMAGE"
+    - |
+      if [ "$CI_COMMIT_BRANCH" = "main" ]; then
+        docker tag "$BOT_IMAGE" "$CI_REGISTRY_IMAGE/bot:latest"
+        docker push "$CI_REGISTRY_IMAGE/bot:latest"
+      fi
+  rules:
+    - if: '$CI_COMMIT_BRANCH'
+
+deploy:
+  stage: deploy
+  script:
+    - echo "$CI_REGISTRY_PASSWORD" | docker login "$CI_REGISTRY" -u "$CI_REGISTRY_USER" --password-stdin
+    - docker pull "$BOT_IMAGE"
+    - docker compose -f "$COMPOSE_FILE" --env-file .env.prod pull postgres redis || true
+    - docker compose -f "$COMPOSE_FILE" --env-file .env.prod up -d --no-build
+    - docker compose -f "$COMPOSE_FILE" --env-file .env.prod ps
+  environment:
+    name: production
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'

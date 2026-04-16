@@ -1,0 +1,18 @@
+{$DOMAIN} {
+    encode zstd gzip
+
+    header {
+        Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+        X-Content-Type-Options "nosniff"
+        X-Frame-Options "DENY"
+        Referrer-Policy "strict-origin-when-cross-origin"
+    }
+
+    @webhook path /webhook
+    reverse_proxy @webhook bot:{$WEBHOOK_PORT}
+
+    @health path /health
+    reverse_proxy @health bot:{$WEBHOOK_PORT}
+
+    reverse_proxy bot:{$WEBHOOK_PORT}
+}
