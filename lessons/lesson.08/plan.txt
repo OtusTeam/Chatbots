@@ -1,0 +1,4 @@
+user - пользователь Telegram
+chats - чаты и диалоги
+messages - история сообщений
+events - ....
