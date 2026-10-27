@@ -9,3 +9,5 @@
 - [Урок 4. Введение в aiogram](lessons/lesson.04/)
 - [Урок 5. Клавиатуры и простое меню](lessons/lesson.05/)
 - [Урок 6. FSM: многошаговые сценарии](lessons/lesson.06/)
+- [Урок 7. Структура кода и мини-проект](lessons/lesson.07/)
+- [Урок 8.  SQLite и основы SQL](lessons/lesson.08/)
